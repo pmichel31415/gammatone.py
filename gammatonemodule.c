@@ -25,7 +25,7 @@
 
 static PyObject *gammatone_wrapper(PyObject *self, PyObject *args) {
 
-    PyObject *in_x, *out_bm, *out_env, *out_instp, *out_instf;
+    PyObject *in_x, *out_bm, *out_env, *out_instp, *out_instf, *ret;
     PyObject *float_obj;
     double *x, *bm, *env, *instp, *instf;
     double cf;
@@ -80,6 +80,8 @@ static PyObject *gammatone_wrapper(PyObject *self, PyObject *args) {
         PyList_SET_ITEM(out_instf, i, float_obj);
     }
 
+    ret = Py_BuildValue("OOOO", out_bm, out_env, out_instp, out_instf);
+
     /*=========================================
      * free memory
      *=========================================
@@ -91,7 +93,12 @@ static PyObject *gammatone_wrapper(PyObject *self, PyObject *args) {
     free(instp);
     free(instf);
 
-    return Py_BuildValue("OOOO", out_bm, out_env, out_instp, out_instf);
+    Py_DECREF(out_bm);
+    Py_DECREF(out_env);
+    Py_DECREF(out_instp);
+    Py_DECREF(out_instf);
+    
+    return ret;
 
 }
 
